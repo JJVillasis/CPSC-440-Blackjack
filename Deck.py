@@ -20,6 +20,7 @@ class Deck:
             for x in range(0,13):
                 self.cards.append(Card.Card(values[x], faces[x], suit))
 
+    #Print Technical information of each card in the deck
     def reprPrint(self):
         for card in self.cards:
             print(repr(card))
@@ -35,5 +36,6 @@ class Deck:
             rIn = random.randint(0,x)
             self.cards[x], self.cards[rIn] = self.cards[rIn], self.cards[x]
 
+    #Draw the top card from the deck
     def drawCard(self):
         return self.cards.pop()
