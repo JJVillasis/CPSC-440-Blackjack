@@ -1,2 +1,2 @@
-# CPSC 440: Speech Recognition - Blackjack
-Use speech recognition to play a game of Blackjack.
+# CPSC 440: Blackjack
+Play a game of Blackjack by pressing a series of buttons
