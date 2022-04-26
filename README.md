@@ -1,2 +1,2 @@
 # CPSC 440: Blackjack
-Play a game of Blackjack by pressing a series of buttons
+With a Raspberry Pi, play a game of Blackjack by pressing a series of buttons.
