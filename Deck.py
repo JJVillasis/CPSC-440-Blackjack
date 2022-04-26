@@ -12,7 +12,7 @@ class Deck:
     def build(self):
         #Classify the suits and values of the deck
         suits = ["Spades", "Clubs", "Diamonds", "Hearts"]
-        values = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10]
+        values = [11, 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10]
         faces = ["Ace", "2", "3", "4", "5", "6", "7", "8", "9", "10", "Jack", "Queen", "King"]
 
         #Append the cards to the current deck (+52)

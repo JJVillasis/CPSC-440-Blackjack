@@ -1,5 +1,6 @@
 import Deck as d
 import Player as p
+import time as t
 import random
 
 class Blackjack:
@@ -12,6 +13,9 @@ class Blackjack:
         self.player = p.Player(playerName)
         self.playingDeck = d.Deck()
 
+        self.stand = False
+        self.bust = False
+
         #Play the game with a 3-deck shoe (Append 2 decks to playing deck)
         self.playingDeck.build()
         self.playingDeck.build()
@@ -21,13 +25,41 @@ class Blackjack:
         for x in range(0, shuffle):
             self.playingDeck.shuffle()
 
-    def play(self):
+    #Change ace value from 11 to 1
+    def aceChange(self, player):
+        change = False
 
-        #Deal cards to the player and dealer
-        self.player.draw(self.playingDeck)
-        self.dealer.draw(self.playingDeck)
-        self.player.draw(self.playingDeck)
-        self.dealer.draw(self.playingDeck)
+        for x in player.hand:
+            if x.face == "Ace" and x.value == 11:
+                x.value = 1
+                change = True
+
+        return change
+
+    #Print hand and card value of the player
+    def showHand(self):
+
+        print("==============================\n")
+
+        #Print Player hand
+        print(self.player.name + "\'s Hand = " + str(self.player.cardValue()))
+        self.player.printHand()
+        print()
+
+        #Dealer hand
+        if (self.stand == False and self.bust == False):
+            #Limited hand visibility
+            print("Dealer\'s Hand = " + "?")
+            print("X")
+            print(self.dealer.hand[1])
+            print()
+
+        else:
+            print("Dealer\'s Hand = " + str(self.dealer.cardValue()))
+            self.dealer.printHand()
+            print()
+
+        print("==============================\n")
 
     #Print Options that are currently available to the player
     def playerOptions(self):
@@ -36,3 +68,127 @@ class Blackjack:
         #Always available to the player
         print("H = Hit")
         print("S = Stand")
+        print()
+
+    def play(self):
+
+        #Deal cards to the player and dealer
+        self.player.draw(self.playingDeck)
+        self.dealer.draw(self.playingDeck)
+        self.player.draw(self.playingDeck)
+        self.dealer.draw(self.playingDeck)
+
+        #self.player.hand.append(c.Card(11, "Ace", "Spades"))
+        #self.player.hand.append(c.Card(11, "Ace", "Clubs"))
+
+
+        ########## Player Turn ##########
+
+        while self.stand == False and self.bust == False:
+
+            #Show hands (Dealer hidden)
+            self.showHand()
+
+            #Check if player hand == 21
+            if(self.player.cardValue() == 21):
+                self.stand = True
+                print("Winner!")
+                print()
+                return
+
+            #Check if player got >21 (double aces)
+            elif self.player.cardValue() > 21:
+                self.aceChange(self.player)
+
+            #Show Player options
+            self.playerOptions()
+
+            #Player input
+            option = input("Player: ")
+            print()
+
+            #Hit - Add card to player hand
+            if option.lower() == "h":
+                self.player.draw(self.playingDeck)
+
+                #If player gets 21
+                if self.player.cardValue() == 21:
+                    self.stand = True
+
+                    #Show hands (Dealer visible)
+                    self.showHand()
+
+                    print("21! " + self.player.name + " Wins!")
+                    print()
+                    return
+
+
+
+                #Check if player hand is over 21
+                elif self.player.cardValue() > 21:
+                    #Check if aceChange lowers hand <= 21
+                    if(self.aceChange(self.player) == False):
+                        #Else bust
+                        self.bust = True
+
+                        #Show hands (Dealer visible)
+                        self.showHand()
+
+                        print(self.player.name + " bust!")
+                        print()
+                        return
+
+            #stand
+            elif option.lower() == "s":
+                self.stand = True
+
+            #Unknown Command
+            else:
+                print("Unknown Command. Please Try again.")
+                print()
+
+        ########## Dealer Hand ###########
+
+        print("========== Dealer's Turn ==========")
+        print()
+
+        #Show hand (Dealer visible)
+        self.showHand()
+        t.sleep(1)
+
+        #If dealer card value < 16, hit until >= 16
+        while self.dealer.cardValue() < 16:
+            self.dealer.draw(self.playingDeck)
+
+            #If dealer card value > 21
+            if self.dealer.cardValue() > 21:
+                #Check if aceChange lowers hand <= 21
+                if(self.aceChange(self.dealer) == False):
+
+                    #Dealer Bust
+
+                    #Show hands (Dealer visible)
+                    self.showHand()
+
+                    print("Dealer bust!")
+                    print()
+                    return
+
+            self.showHand()
+            t.sleep(1)
+
+        ########## Hand Comparisons ###########
+
+        #Player wins
+        if self.player.cardValue() > self.dealer.cardValue():
+            print(self.player.name + "Wins!")
+            print()
+
+        #Dealer wins
+        elif self.dealer.cardValue() > self.player.cardValue():
+            print(self.player.name + " Loses.")
+            print()
+
+        else:
+            print(self.player.name + " Breaks Even.")
+            print()

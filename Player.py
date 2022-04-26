@@ -20,6 +20,14 @@ class Player:
         self.hand.append(deck.drawCard())
         return self
 
+    #Return sum of values of cards in hand    
+    def cardValue(self):
+        sum = 0
+        for x in self.hand:
+            sum += x.value
+
+        return sum
+
     #Print cards found in hand
     def printHand(self):
         for card in self.hand:
