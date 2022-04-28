@@ -1,6 +1,7 @@
 import Deck as d
 import Player as p
 import time as t
+from gpiozero import Button
 import random
 
 class Blackjack:
@@ -15,6 +16,10 @@ class Blackjack:
 
         self.stand = False
         self.bust = False
+        
+        #User input
+        self.button = Button(14)
+        self.button2 = Button(18)
 
         #Play the game with a 3-deck shoe (Append 2 decks to playing deck)
         self.playingDeck.build()
@@ -104,8 +109,28 @@ class Blackjack:
             self.playerOptions()
 
             #Player input
-            option = input("Player: ")
-            print()
+            #option = input("Player: ")
+            #print()
+            
+            #Button input
+            option = ""
+            
+            while True:
+                if self.button.is_pressed:
+                    print("Player Input: Hit")
+                    print()
+                    option = "h"
+                    t.sleep(.5)
+                    break
+                
+                if self.button2.is_pressed:
+                    print("Player Input: Stand")
+                    print()
+                    option = "s"
+                    t.sleep(.5)
+                    break
+            
+            
 
             #Hit - Add card to player hand
             if option.lower() == "h":
@@ -181,7 +206,7 @@ class Blackjack:
 
         #Player wins
         if self.player.cardValue() > self.dealer.cardValue():
-            print(self.player.name + "Wins!")
+            print(self.player.name + " Wins!")
             print()
 
         #Dealer wins
@@ -192,3 +217,4 @@ class Blackjack:
         else:
             print(self.player.name + " Breaks Even.")
             print()
+
