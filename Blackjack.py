@@ -192,7 +192,7 @@ class Blackjack:
             pygame.display.update()
 
     #Win state graphics
-    def winState(player = False, bust = False, bj = False):
+    def winState(self, player = False, bust = False, bj = False):
         #Players break even
         if not player:
             winText = myFont.render("Players Break Even!", 1 , (0,0,0))
@@ -409,7 +409,7 @@ class Blackjack:
                     self.ledG.blink(on_time = .1 ,off_time = .1)
                     print("Dealer bust!")
                     print()
-                    self.winState(self.dealer, "bust")
+                    self.winState(self.dealer, bust = True)
                     t.sleep(5)
                     return
 
