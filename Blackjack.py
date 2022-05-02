@@ -80,6 +80,10 @@ class Blackjack:
         self.player.hand.clear()
         self.dealer.hand.clear()
 
+        #Reset Stand and Bust booleans
+        self.bust = False
+        self.stand = False
+
         #Deal cards to the player and dealer
         self.player.draw(self.playingDeck)
         self.dealer.draw(self.playingDeck)
