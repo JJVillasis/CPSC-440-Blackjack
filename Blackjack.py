@@ -192,7 +192,7 @@ class Blackjack:
             pygame.display.update()
 
     #Win state graphics
-    def winState(player = False, condition = False):
+    def winState(player = False, bust = False, bj = False):
         #Players break even
         if not player:
             winText = myFont.render("Players Break Even!", 1 , (0,0,0))
@@ -201,14 +201,14 @@ class Blackjack:
             gameDisplay.blit(winText, winTextPos)
 
         #Player/dealer busts
-        elif condition == "bust":
+        elif bust:
             bustText = myFont.render(player.name + " Busts!", 1 , (0,0,0))
             bustTextPos = bustText.get_rect(center = (DISPLAY_WIDTH/2, (DISPLAY_HEIGHT/2) - (75/2)))
             pygame.draw.rect(gameDisplay, (255,255,255), bustTextPos)
             gameDisplay.blit(bustText, bustTextPos)
 
         #Player.dealer gets 21
-        elif condition == "21":
+        elif bj:
             winText = myFont.render("21! " + player.name + " Wins!", 1 , (0,0,0))
             winTextPos = winText.get_rect(center = (DISPLAY_WIDTH/2, (DISPLAY_HEIGHT/2) - (75/2)))
             pygame.draw.rect(gameDisplay, (255,255,255), winTextPos)
@@ -262,7 +262,7 @@ class Blackjack:
             self.ledR.blink(on_time = .3 ,off_time = .1)
             print("21! Dealer Wins!")
             print()
-            selfwinState(self.dealer, "21")
+            self.winState(self.dealer, bj = True)
             t.sleep(5)
             return
 
@@ -281,7 +281,7 @@ class Blackjack:
                 self.ledG.blink(on_time = .1 ,off_time = .1)
                 print("Winner!")
                 print()
-                self.winState(self.player, "21")
+                self.winState(self.player, bj = True)
                 t.sleep(5)
                 return
 
@@ -336,7 +336,7 @@ class Blackjack:
                     self.ledG.blink(on_time = .1 ,off_time = .1)
                     print("21! " + self.player.name + " Wins!")
                     print()
-                    self.winState(self.player, "21")
+                    self.winState(self.player, bj = True)
                     t.sleep(5)
                     return
 
@@ -355,7 +355,7 @@ class Blackjack:
                         self.ledR.blink(on_time = .3 ,off_time = .1)
                         print(self.player.name + " bust!")
                         print()
-                        self.winState(self.player, "bust")
+                        self.winState(self.player, bust = True)
                         t.sleep(5)
                         return
 
@@ -392,7 +392,7 @@ class Blackjack:
                 self.ledG.blink(on_time = .1 ,off_time = .1)
                 print("21! " + self.dealer.name + " Wins!")
                 print()
-                self.winState(self.dealer, "21")
+                self.winState(self.dealer, bj = True)
                 t.sleep(5)
                 return
 
