@@ -71,6 +71,10 @@ class Blackjack:
                 x.value = 1
                 change = True
 
+        if change:
+            self.showHand()
+            self.drawHands()
+
         return change
 
     #Print hand and card value of the player
