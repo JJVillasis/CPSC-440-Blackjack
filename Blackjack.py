@@ -168,7 +168,7 @@ class Blackjack:
         pygame.display.update()
 
         #Draw dealer hand
-        if not stand and not bust:
+        if not self.stand and not self.bust:
             gameDisplay.blit(cardBack, (0, 0))
 
             for x in range(1, len(self.dealer.hand)):
