@@ -1,7 +1,7 @@
 from Deck import Deck
 from Player import Player
 import time as t
-from gpiozero import Button
+from gpiozero import Button, LED
 import random
 import pygame
 
@@ -21,7 +21,11 @@ class Blackjack:
         #User input
         self.button = Button(14)    #Hit/Play again
         self.button2 = Button(15)   #Stand/Quit
-
+        ##LED for global use
+        self.ledG = LED(21)
+        self.ledR = LED(20)
+        self.ledB = LED(16)
+        
         #Play the game with a 3-deck shoe (Append 2 decks to playing deck)
         self.playingDeck.build()
         self.playingDeck.build()
@@ -76,9 +80,9 @@ class Blackjack:
         print("S = Stand")
         print()
 
-    def drawHand(self):
-
     def gameplay(self):
+        
+        
         #Clear hands from previous game
         self.player.hand.clear()
         self.dealer.hand.clear()
@@ -101,9 +105,10 @@ class Blackjack:
             self.bust = True
 
             self.showHand()
-
+            self.ledR.blink(on_time = .3 ,off_time = .1)
             print("21! Dealer Wins!")
             print()
+            t.sleep(5)
             return
 
 
@@ -117,8 +122,10 @@ class Blackjack:
             #Check if player hand == 21
             if(self.player.cardValue() == 21):
                 self.stand = True
+                self.ledG.blink(on_time = .1 ,off_time = .1)
                 print("Winner!")
                 print()
+                t.sleep(5)
                 return
 
             #Check if player got >21 (double aces)
@@ -134,9 +141,10 @@ class Blackjack:
             
             #Button input
             option = ""
-            
+            self.ledB.blink()
             while True:
                 if self.button.is_pressed:
+                    self.ledB.off()
                     print("Player Input: Hit")
                     print()
                     option = "h"
@@ -144,6 +152,7 @@ class Blackjack:
                     break
                 
                 if self.button2.is_pressed:
+                    self.ledB.off()
                     print("Player Input: Stand")
                     print()
                     option = "s"
@@ -162,9 +171,10 @@ class Blackjack:
 
                     #Show hands (Dealer visible)
                     self.showHand()
-
+                    self.ledG.blink(on_time = .1 ,off_time = .1)
                     print("21! " + self.player.name + " Wins!")
                     print()
+                    t.sleep(5)
                     return
 
 
@@ -178,9 +188,10 @@ class Blackjack:
 
                         #Show hands (Dealer visible)
                         self.showHand()
-
+                        self.ledR.blink(on_time = .3 ,off_time = .1)
                         print(self.player.name + " bust!")
                         print()
+                        t.sleep(5)
                         return
 
             #stand
@@ -214,9 +225,10 @@ class Blackjack:
 
                     #Show hands (Dealer visible)
                     self.showHand()
-
+                    self.ledG.blink(on_time = .1 ,off_time = .1)
                     print("Dealer bust!")
                     print()
+                    t.sleep(5)
                     return
 
             self.showHand()
@@ -226,17 +238,25 @@ class Blackjack:
 
         #Player wins
         if self.player.cardValue() > self.dealer.cardValue():
+            self.ledG.blink(on_time = .1 ,off_time = .1)
             print(self.player.name + " Wins!")
             print()
+            t.sleep(5)
 
         #Dealer wins
         elif self.dealer.cardValue() > self.player.cardValue():
+            self.ledR.blink(on_time = .3 ,off_time = .1)
             print(self.player.name + " Loses.")
             print()
+            t.sleep(5)
+
 
         else:
+            self.ledB.on()
             print(self.player.name + " Breaks Even.")
             print()
+            t.sleep(5)
+
 
 
     def play(self):
@@ -244,10 +264,13 @@ class Blackjack:
 
         while not quit:
             self.gameplay()
-
+                
             print("Do you wish to play again?")
             print()
-
+            self.ledG.blink(on_time = .5)
+            self.ledR.blink(on_time = .4)
+            self.ledB.blink(on_time = .3)
+            
             #Button input
             while True:
                     if self.button.is_pressed:
@@ -255,6 +278,9 @@ class Blackjack:
                         print()
                         Quit = False
                         t.sleep(.5)
+                        self.ledG.off()
+                        self.ledR.off()
+                        self.ledB.off()
                         break
                     
                     if self.button2.is_pressed:
@@ -262,4 +288,7 @@ class Blackjack:
                         print()
                         quit = True
                         t.sleep(.5)
+                        self.ledG.off()
+                        self.ledR.off()
+                        self.ledB.off()
                         break
