@@ -12,7 +12,7 @@ pygame.init()
 
 #Window dimensions
 DISPLAY_WIDTH = 1800
-DISPLAY_HEIGHT = 700
+DISPLAY_HEIGHT = 750
 
 #Card graphic dimensions
 CARD_WIDTH = 200
@@ -123,7 +123,7 @@ class Blackjack:
             num = x % 18
             gameDisplay.blit(flourish.cards[x].image, ((CARD_WIDTH * (num % 9)),(CARD_HEIGHT * int(num / 9))))
             pygame.display.update()
-            sleep(.2)
+            t.sleep(.2)
 
 
     #Special animation for the start of the game
@@ -131,17 +131,17 @@ class Blackjack:
         #Draw player Hand
         gameDisplay.blit(self.player.hand[0].image, (0, DISPLAY_HEIGHT - CARD_HEIGHT))
         pygame.display.update()
-        sleep(.3)
+        t.sleep(.3)
 
         #Draw dealer Hand
         gameDisplay.blit(cardBack, (0, 0))
         pygame.display.update()
-        sleep(.3)
+        t.sleep(.3)
         
         #Draw player Hand
         gameDisplay.blit(self.player.hand[1].image, (CARD_WIDTH + 5, DISPLAY_HEIGHT - CARD_HEIGHT))
         pygame.display.update()
-        sleep(.3)
+        t.sleep(.3)
 
         #Draw dealer Hand
         gameDisplay.blit(self.dealer.hand[1].image, ((CARD_WIDTH + 5), 0))
@@ -149,7 +149,7 @@ class Blackjack:
 
         #Draw player Card Value
         playerVal = myFont.render("Player = " + str(self.player.cardValue()), 1, (0,0,0))
-        gameDisplay.blit(playerVal, ((CARD_WIDTH * 2) + 10, DISPLAY_HEIGHT - CARD_HEIGHT))
+        gameDisplay.blit(playerVal, ((CARD_WIDTH * 2) + 10, DISPLAY_HEIGHT - 75))
         dealerVal = myFont.render("Dealer = ?" , 1, (0,0,0))
         gameDisplay.blit(dealerVal, ((CARD_WIDTH * 2) + 10, 0))
         pygame.display.update()
@@ -170,7 +170,7 @@ class Blackjack:
             gameDisplay.blit(self.player.hand[x].image, ((CARD_WIDTH * x) + (5 * x), DISPLAY_HEIGHT - CARD_HEIGHT))
         #Draw player card value
         playerVal = myFont.render("Player = " + str(self.player.cardValue()), 1, (0,0,0))
-        gameDisplay.blit(playerVal, ((CARD_WIDTH * len(self.player.hand)) + (5 * len(self.player.hand)), DISPLAY_HEIGHT - CARD_HEIGHT))
+        gameDisplay.blit(playerVal, ((CARD_WIDTH * len(self.player.hand)) + (5 * len(self.player.hand)), DISPLAY_HEIGHT - 75))
         pygame.display.update()
 
         #Draw dealer hand
@@ -191,6 +191,7 @@ class Blackjack:
             gameDisplay.blit(dealerVal, ((CARD_WIDTH * len(self.dealer.hand)) + (5 * len(self.dealer.hand)), 0))
             pygame.display.update()
 
+    #Win state graphics
     def winState(player = False, condition = False):
         #Players break even
         if not player:
@@ -261,7 +262,7 @@ class Blackjack:
             self.ledR.blink(on_time = .3 ,off_time = .1)
             print("21! Dealer Wins!")
             print()
-            winState(self.dealer, "21")
+            selfwinState(self.dealer, "21")
             t.sleep(5)
             return
 
@@ -280,7 +281,7 @@ class Blackjack:
                 self.ledG.blink(on_time = .1 ,off_time = .1)
                 print("Winner!")
                 print()
-                winState(self.player, "21")
+                self.winState(self.player, "21")
                 t.sleep(5)
                 return
 
@@ -335,7 +336,7 @@ class Blackjack:
                     self.ledG.blink(on_time = .1 ,off_time = .1)
                     print("21! " + self.player.name + " Wins!")
                     print()
-                    winState(self.player, "21")
+                    self.winState(self.player, "21")
                     t.sleep(5)
                     return
 
@@ -354,7 +355,7 @@ class Blackjack:
                         self.ledR.blink(on_time = .3 ,off_time = .1)
                         print(self.player.name + " bust!")
                         print()
-                        winState(self.player, "bust")
+                        self.winState(self.player, "bust")
                         t.sleep(5)
                         return
 
@@ -391,7 +392,7 @@ class Blackjack:
                 self.ledG.blink(on_time = .1 ,off_time = .1)
                 print("21! " + self.dealer.name + " Wins!")
                 print()
-                winState(self.dealer, "21")
+                self.winState(self.dealer, "21")
                 t.sleep(5)
                 return
 
@@ -408,7 +409,7 @@ class Blackjack:
                     self.ledG.blink(on_time = .1 ,off_time = .1)
                     print("Dealer bust!")
                     print()
-                    winState(self.dealer, "bust")
+                    self.winState(self.dealer, "bust")
                     t.sleep(5)
                     return
 
