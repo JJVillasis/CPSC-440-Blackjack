@@ -75,160 +75,158 @@ class Blackjack:
         print("S = Stand")
         print()
 
-    def play(self):
+    def gameplay(self):
+        #Clear hands from previous game
+        self.player.hand.clear()
+        self.dealer.hand.clear()
 
-        #Quit game
-        quit = False 
+        #Deal cards to the player and dealer
+        self.player.draw(self.playingDeck)
+        self.dealer.draw(self.playingDeck)
+        self.player.draw(self.playingDeck)
+        self.dealer.draw(self.playingDeck)
 
-        #Repeat until player quits
-        while not quit:
-
-            #Clear hands from previous game
-            self.player.hand.clear()
-            self.dealer.hand.clear()
-
-            #Deal cards to the player and dealer
-            self.player.draw(self.playingDeck)
-            self.dealer.draw(self.playingDeck)
-            self.player.draw(self.playingDeck)
-            self.dealer.draw(self.playingDeck)
-
-            #self.player.hand.append(c.Card(11, "Ace", "Spades"))
-            #self.player.hand.append(c.Card(11, "Ace", "Clubs"))
+        #self.player.hand.append(c.Card(11, "Ace", "Spades"))
+        #self.player.hand.append(c.Card(11, "Ace", "Clubs"))
 
 
-            ########## Player Turn ##########
+        ########## Player Turn ##########
 
-            while self.stand == False and self.bust == False:
+        while self.stand == False and self.bust == False:
 
-                #Show hands (Dealer hidden)
-                self.showHand()
+            #Show hands (Dealer hidden)
+            self.showHand()
 
-                #Check if player hand == 21
-                if(self.player.cardValue() == 21):
+            #Check if player hand == 21
+            if(self.player.cardValue() == 21):
+                self.stand = True
+                print("Winner!")
+                print()
+                return
+
+            #Check if player got >21 (double aces)
+            elif self.player.cardValue() > 21:
+                self.aceChange(self.player)
+
+            #Show Player options
+            self.playerOptions()
+
+            #Player input
+            #option = input("Player: ")
+            #print()
+            
+            #Button input
+            option = ""
+            
+            while True:
+                if self.button.is_pressed:
+                    print("Player Input: Hit")
+                    print()
+                    option = "h"
+                    t.sleep(.5)
+                    break
+                
+                if self.button2.is_pressed:
+                    print("Player Input: Stand")
+                    print()
+                    option = "s"
+                    t.sleep(.5)
+                    break
+            
+            
+
+            #Hit - Add card to player hand
+            if option.lower() == "h":
+                self.player.draw(self.playingDeck)
+
+                #If player gets 21
+                if self.player.cardValue() == 21:
                     self.stand = True
-                    print("Winner!")
+
+                    #Show hands (Dealer visible)
+                    self.showHand()
+
+                    print("21! " + self.player.name + " Wins!")
                     print()
                     return
 
-                #Check if player got >21 (double aces)
+
+
+                #Check if player hand is over 21
                 elif self.player.cardValue() > 21:
-                    self.aceChange(self.player)
-
-                #Show Player options
-                self.playerOptions()
-
-                #Player input
-                #option = input("Player: ")
-                #print()
-                
-                #Button input
-                option = ""
-                
-                while True:
-                    if self.button.is_pressed:
-                        print("Player Input: Hit")
-                        print()
-                        option = "h"
-                        t.sleep(.5)
-                        break
-                    
-                    if self.button2.is_pressed:
-                        print("Player Input: Stand")
-                        print()
-                        option = "s"
-                        t.sleep(.5)
-                        break
-                
-                
-
-                #Hit - Add card to player hand
-                if option.lower() == "h":
-                    self.player.draw(self.playingDeck)
-
-                    #If player gets 21
-                    if self.player.cardValue() == 21:
-                        self.stand = True
+                    #Check if aceChange lowers hand <= 21
+                    if(self.aceChange(self.player) == False):
+                        #Else bust
+                        self.bust = True
 
                         #Show hands (Dealer visible)
                         self.showHand()
 
-                        print("21! " + self.player.name + " Wins!")
+                        print(self.player.name + " bust!")
                         print()
                         return
 
+            #stand
+            elif option.lower() == "s":
+                self.stand = True
 
+            #Unknown Command
+            else:
+                print("Unknown Command. Please Try again.")
+                print()
 
-                    #Check if player hand is over 21
-                    elif self.player.cardValue() > 21:
-                        #Check if aceChange lowers hand <= 21
-                        if(self.aceChange(self.player) == False):
-                            #Else bust
-                            self.bust = True
+        ########## Dealer Hand ###########
 
-                            #Show hands (Dealer visible)
-                            self.showHand()
+        print("========== Dealer's Turn ==========")
+        print()
 
-                            print(self.player.name + " bust!")
-                            print()
-                            return
+        #Show hand (Dealer visible)
+        self.showHand()
+        t.sleep(1)
 
-                #stand
-                elif option.lower() == "s":
-                    self.stand = True
+        #If dealer card value < 16, hit until >= 16
+        while self.dealer.cardValue() < 16:
+            self.dealer.draw(self.playingDeck)
 
-                #Unknown Command
-                else:
-                    print("Unknown Command. Please Try again.")
+            #If dealer card value > 21
+            if self.dealer.cardValue() > 21:
+                #Check if aceChange lowers hand <= 21
+                if(self.aceChange(self.dealer) == False):
+
+                    #Dealer Bust
+
+                    #Show hands (Dealer visible)
+                    self.showHand()
+
+                    print("Dealer bust!")
                     print()
+                    return
 
-            ########## Dealer Hand ###########
-
-            print("========== Dealer's Turn ==========")
-            print()
-
-            #Show hand (Dealer visible)
             self.showHand()
             t.sleep(1)
 
-            #If dealer card value < 16, hit until >= 16
-            while self.dealer.cardValue() < 16:
-                self.dealer.draw(self.playingDeck)
+        ########## Hand Comparisons ###########
 
-                #If dealer card value > 21
-                if self.dealer.cardValue() > 21:
-                    #Check if aceChange lowers hand <= 21
-                    if(self.aceChange(self.dealer) == False):
+        #Player wins
+        if self.player.cardValue() > self.dealer.cardValue():
+            print(self.player.name + " Wins!")
+            print()
 
-                        #Dealer Bust
+        #Dealer wins
+        elif self.dealer.cardValue() > self.player.cardValue():
+            print(self.player.name + " Loses.")
+            print()
 
-                        #Show hands (Dealer visible)
-                        self.showHand()
+        else:
+            print(self.player.name + " Breaks Even.")
+            print()
 
-                        print("Dealer bust!")
-                        print()
-                        return
 
-                self.showHand()
-                t.sleep(1)
+    def play(self):
+        quit = False
 
-            ########## Hand Comparisons ###########
-
-            #Player wins
-            if self.player.cardValue() > self.dealer.cardValue():
-                print(self.player.name + " Wins!")
-                print()
-
-            #Dealer wins
-            elif self.dealer.cardValue() > self.player.cardValue():
-                print(self.player.name + " Loses.")
-                print()
-
-            else:
-                print(self.player.name + " Breaks Even.")
-                print()
-
-            ######### Play Again? ###########
+        while not quit:
+            self.gameplay()
 
             print("Do you wish to play again?")
             print()
