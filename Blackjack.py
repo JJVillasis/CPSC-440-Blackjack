@@ -126,6 +126,7 @@ class Blackjack:
             sleep(.2)
 
 
+    #Special animation for the start of the game
     def drawStart(self):
         #Draw player Hand
         gameDisplay.blit(self.player.hand[0].image, (0, DISPLAY_HEIGHT - CARD_HEIGHT))
@@ -153,6 +154,7 @@ class Blackjack:
         gameDisplay.blit(dealerVal, ((CARD_WIDTH * 2) + 10, 0))
         pygame.display.update()
 
+    #Draw player hands onto the game board
     def drawHands(self):
         gameDisplay.fill((0,150,0))
         pygame.display.update()
@@ -189,6 +191,43 @@ class Blackjack:
             gameDisplay.blit(dealerVal, ((CARD_WIDTH * len(self.dealer.hand)) + (5 * len(self.dealer.hand)), 0))
             pygame.display.update()
 
+    def winState(player = False, condition = False):
+        #Players break even
+        if not player:
+            winText = myFont.render("Players Break Even!", 1 , (0,0,0))
+            winTextPos = winText.get_rect(center = (DISPLAY_WIDTH/2, (DISPLAY_HEIGHT/2) - (75/2)))
+            pygame.draw.rect(gameDisplay, (255,255,255), winTextPos)
+            gameDisplay.blit(winText, winTextPos)
+
+        #Player/dealer busts
+        elif condition == "bust":
+            bustText = myFont.render(player.name + " Busts!", 1 , (0,0,0))
+            bustTextPos = bustText.get_rect(center = (DISPLAY_WIDTH/2, (DISPLAY_HEIGHT/2) - (75/2)))
+            pygame.draw.rect(gameDisplay, (255,255,255), bustTextPos)
+            gameDisplay.blit(bustText, bustTextPos)
+
+        #Player.dealer gets 21
+        elif condition == "21":
+            winText = myFont.render("21! " + player.name + " Wins!", 1 , (0,0,0))
+            winTextPos = winText.get_rect(center = (DISPLAY_WIDTH/2, (DISPLAY_HEIGHT/2) - (75/2)))
+            pygame.draw.rect(gameDisplay, (255,255,255), winTextPos)
+            gameDisplay.blit(winText, winTextPos)
+
+        #Player/dealer wins
+        else:
+            winText = myFont.render(player.name + " Wins!", 1 , (0,0,0))
+            winTextPos = winText.get_rect(center = (DISPLAY_WIDTH/2, (DISPLAY_HEIGHT/2) - (75/2)))
+            pygame.draw.rect(gameDisplay, (255,255,255), winTextPos)
+            gameDisplay.blit(winText, winTextPos)
+
+        #Ask to play again
+        continueText = myFont.render("Play Again?", 1, (255,255,255))
+        continueTextPos = continueText.get_rect(center = (DISPLAY_WIDTH/2, (DISPLAY_HEIGHT/2) + 75/2))
+        pygame.draw.rect(gameDisplay, (0,0,0), continueTextPos)
+        gameDisplay.blit(continueText, continueTextPos)
+
+        pygame.display.update()
+
     ########## Gameplay Functions ##########
 
     def gameplay(self):
@@ -222,6 +261,7 @@ class Blackjack:
             self.ledR.blink(on_time = .3 ,off_time = .1)
             print("21! Dealer Wins!")
             print()
+            winState(self.dealer, "21")
             t.sleep(5)
             return
 
@@ -240,6 +280,7 @@ class Blackjack:
                 self.ledG.blink(on_time = .1 ,off_time = .1)
                 print("Winner!")
                 print()
+                winState(self.player, "21")
                 t.sleep(5)
                 return
 
@@ -294,6 +335,7 @@ class Blackjack:
                     self.ledG.blink(on_time = .1 ,off_time = .1)
                     print("21! " + self.player.name + " Wins!")
                     print()
+                    winState(self.player, "21")
                     t.sleep(5)
                     return
 
@@ -312,6 +354,7 @@ class Blackjack:
                         self.ledR.blink(on_time = .3 ,off_time = .1)
                         print(self.player.name + " bust!")
                         print()
+                        winState(self.player, "bust")
                         t.sleep(5)
                         return
 
@@ -338,8 +381,22 @@ class Blackjack:
         while self.dealer.cardValue() < 16:
             self.dealer.draw(self.playingDeck)
 
+            #If dealer gets 21
+            if self.dealer.cardValue() == 21:
+                self.stand = True
+
+                #Show hands (Dealer visible)
+                self.showHand()
+                self.drawHands()
+                self.ledG.blink(on_time = .1 ,off_time = .1)
+                print("21! " + self.dealer.name + " Wins!")
+                print()
+                winState(self.dealer, "21")
+                t.sleep(5)
+                return
+
             #If dealer card value > 21
-            if self.dealer.cardValue() > 21:
+            elif self.dealer.cardValue() > 21:
                 #Check if aceChange lowers hand <= 21
                 if(self.aceChange(self.dealer) == False):
 
@@ -351,6 +408,7 @@ class Blackjack:
                     self.ledG.blink(on_time = .1 ,off_time = .1)
                     print("Dealer bust!")
                     print()
+                    winState(self.dealer, "bust")
                     t.sleep(5)
                     return
 
@@ -365,6 +423,7 @@ class Blackjack:
             self.ledG.blink(on_time = .1 ,off_time = .1)
             print(self.player.name + " Wins!")
             print()
+            self.winState(self.player)
             t.sleep(5)
 
         #Dealer wins
@@ -372,6 +431,7 @@ class Blackjack:
             self.ledR.blink(on_time = .3 ,off_time = .1)
             print(self.player.name + " Loses.")
             print()
+            self.winState(self.dealer)
             t.sleep(5)
 
 
@@ -379,6 +439,7 @@ class Blackjack:
             self.ledB.on()
             print(self.player.name + " Breaks Even.")
             print()
+            self.winState()
             t.sleep(5)
 
 
