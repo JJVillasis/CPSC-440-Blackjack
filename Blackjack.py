@@ -5,6 +5,30 @@ from gpiozero import Button, LED
 import random
 import pygame
 
+#Initialize pygame
+pygame.init()
+
+#Window dimensions
+DISPLAY_WIDTH = 1800
+DISPLAY_HEIGHT = 700
+
+#Card graphic dimensions
+CARD_WIDTH = 200
+CARD_HEIGHT = 300
+
+#Activate window
+gameDisplay = pygame.display.set_mode((DISPLAY_WIDTH, DISPLAY_HEIGHT))
+pygame.display.set_caption("CPSC 440 - Blackjack")
+
+#Card back graphic
+folderPath = "Playing Cards"
+path = "back.png"
+cardBack = pygame.image.load(os.path.join(folderPath, path))
+cardBack = pygame.transform.scale(cardBack, (CARD_WIDTH, CARD_HEIGHT))
+
+#Game Font
+myFont = pygame.font.SysFont("consolas", 75, ())
+
 class Blackjack:
 
     #Constructor of object Blackjack
@@ -17,6 +41,7 @@ class Blackjack:
 
         self.stand = False
         self.bust = False
+        self.start = True
         
         #User input
         self.button = Button(14)    #Hit/Play again
@@ -80,6 +105,86 @@ class Blackjack:
         print("S = Stand")
         print()
 
+    ########## Graphics Functions ##########
+
+    #Lays the cards out one-by-one
+    def cardFlourish(self):
+        flourish = Deck()
+        flourish.build()
+        flourish.build()
+
+        for x in range(len(flourish.cards)):
+            num = x % 18
+            gameDisplay.blit(flourish.cards[x].image, ((CARD_WIDTH * (num % 9)),(CARD_HEIGHT * int(num / 9))))
+            pygame.display.update()
+            sleep(.2)
+
+
+    def drawStart(self):
+        #Draw player Hand
+        gameDisplay.blit(self.player.hand[0].image, (0, DISPLAY_HEIGHT - CARD_HEIGHT))
+        pygame.display.update()
+        sleep(.3)
+
+        #Draw dealer Hand
+        gameDisplay.blit(cardBack, (0, 0))
+        pygame.display.update()
+        sleep(.3)
+        
+        #Draw player Hand
+        gameDisplay.blit(self.player.hand[1].image, (CARD_WIDTH + 5, DISPLAY_HEIGHT - CARD_HEIGHT))
+        pygame.display.update()
+        sleep(.3)
+
+        #Draw dealer Hand
+        gameDisplay.blit(self.dealer.hand[1].image, ((CARD_WIDTH + 5), 0))
+        pygame.display.update()
+
+        #Draw player Card Value
+        playerVal = myFont.render("Player = " + str(self.player.cardValue()), 1, (0,0,0))
+        gameDisplay.blit(playerVal, ((CARD_WIDTH * 2) + 10, DISPLAY_HEIGHT - CARD_HEIGHT))
+        dealerVal = myFont.render("Dealer = ?" , 1, (0,0,0))
+        gameDisplay.blit(dealerVal, ((CARD_WIDTH * 2) + 10, 0))
+        pygame.display.update()
+
+    def drawHands(self):
+        gameDisplay.fill((0,150,0))
+        pygame.display.update()
+
+        #Draw starting hand
+        if self.start:
+            self.drawStart()
+            self.start = False
+            return
+
+        #Draw player hand
+        for x in range(len(self.player.hand)):
+            gameDisplay.blit(self.player.hand[x].image, ((CARD_WIDTH * x) + (5 * x), DISPLAY_HEIGHT - CARD_HEIGHT))
+        #Draw player card value
+        playerVal = myFont.render("Player = " + str(self.player.cardValue()), 1, (0,0,0))
+        gameDisplay.blit(playerVal, ((CARD_WIDTH * len(self.player.hand)) + (5 * len(self.player.hand)), DISPLAY_HEIGHT - CARD_HEIGHT))
+        pygame.display.update()
+
+        #Draw dealer hand
+        if not stand and not bust:
+            gameDisplay.blit(cardBack, (0, 0))
+
+            for x in range(1, len(self.dealer.hand)):
+                gameDisplay.blit(self.dealer.hand[x].image, ((CARD_WIDTH * x) + (5 * x), 0))
+            #Draw player card value
+            dealerVal = myFont.render("Dealer = ?" , 1, (0,0,0))
+            gameDisplay.blit(dealerVal, ((CARD_WIDTH * len(self.dealer.hand)) + (5 * len(self.dealer.hand)), 0))
+            pygame.display.update()
+
+        else:
+            for x in range(len(self.dealer.hand)):
+                gameDisplay.blit(self.dealer.hand[x].image, ((CARD_WIDTH * x) + (5 * x), 0))
+            dealerVal = myFont.render("Dealer = " + str(self.dealer.cardValue()), 1, (0,0,0))
+            gameDisplay.blit(dealerVal, ((CARD_WIDTH * len(self.dealer.hand)) + (5 * len(self.dealer.hand)), 0))
+            pygame.display.update()
+
+    ########## Gameplay Functions ##########
+
     def gameplay(self):
         
         
@@ -87,9 +192,10 @@ class Blackjack:
         self.player.hand.clear()
         self.dealer.hand.clear()
 
-        #Reset Stand and Bust booleans
+        #Reset Start, Stand and Bust booleans
         self.bust = False
         self.stand = False
+        self.start = True
 
         #Deal cards to the player and dealer
         self.player.draw(self.playingDeck)
@@ -103,8 +209,10 @@ class Blackjack:
         #Check if dealer has 21
         if self.dealer.cardValue() == 21:
             self.bust = True
+            self.start = False
 
             self.showHand()
+            self.drawHands()
             self.ledR.blink(on_time = .3 ,off_time = .1)
             print("21! Dealer Wins!")
             print()
@@ -118,6 +226,7 @@ class Blackjack:
 
             #Show hands (Dealer hidden)
             self.showHand()
+            self.drawHands()
 
             #Check if player hand == 21
             if(self.player.cardValue() == 21):
@@ -171,6 +280,7 @@ class Blackjack:
 
                     #Show hands (Dealer visible)
                     self.showHand()
+                    self.drawHands()
                     self.ledG.blink(on_time = .1 ,off_time = .1)
                     print("21! " + self.player.name + " Wins!")
                     print()
@@ -188,6 +298,7 @@ class Blackjack:
 
                         #Show hands (Dealer visible)
                         self.showHand()
+                        self.drawHands()
                         self.ledR.blink(on_time = .3 ,off_time = .1)
                         print(self.player.name + " bust!")
                         print()
@@ -210,6 +321,7 @@ class Blackjack:
 
         #Show hand (Dealer visible)
         self.showHand()
+        self.drawHands()
         t.sleep(1)
 
         #If dealer card value < 16, hit until >= 16
@@ -225,6 +337,7 @@ class Blackjack:
 
                     #Show hands (Dealer visible)
                     self.showHand()
+                    self.drawHands()
                     self.ledG.blink(on_time = .1 ,off_time = .1)
                     print("Dealer bust!")
                     print()
@@ -232,6 +345,7 @@ class Blackjack:
                     return
 
             self.showHand()
+            self.drawHands()
             t.sleep(1)
 
         ########## Hand Comparisons ###########
