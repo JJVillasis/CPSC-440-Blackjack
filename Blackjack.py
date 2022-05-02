@@ -18,8 +18,8 @@ class Blackjack:
         self.bust = False
         
         #User input
-        self.button = Button(14)
-        self.button2 = Button(18)
+        self.button = Button(14)    #Hit/Play again
+        self.button2 = Button(18)   #Stand/Quit
 
         #Play the game with a 3-deck shoe (Append 2 decks to playing deck)
         self.playingDeck.build()
@@ -88,6 +88,16 @@ class Blackjack:
 
         #self.player.hand.append(c.Card(11, "Ace", "Spades"))
         #self.player.hand.append(c.Card(11, "Ace", "Clubs"))
+
+        #Check if dealer has 21
+        if self.dealer.cardValue() == 21:
+            self.bust = True
+
+            self.showHand()
+
+            print("21! Dealer Wins!")
+            print()
+            return
 
 
         ########## Player Turn ##########
