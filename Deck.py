@@ -1,5 +1,7 @@
-import Card
+from Card import Card
 import random
+import pygame
+import os
 
 class Deck:
 
@@ -10,15 +12,23 @@ class Deck:
 
     #Append new deck of playing cards to current cards
     def build(self):
+        #Card graphic dimensions
+        width = 200
+        height = 300
+
         #Classify the suits and values of the deck
-        suits = ["Spades", "Clubs", "Diamonds", "Hearts"]
+        suits = ["Spades", "Diamonds", "Clubs", "Hearts"]
         values = [11, 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10]
         faces = ["Ace", "2", "3", "4", "5", "6", "7", "8", "9", "10", "Jack", "Queen", "King"]
+        folderPath = "Playing Cards"
 
         #Append the cards to the current deck (+52)
-        for suit in suits:
-            for x in range(0,13):
-                self.cards.append(Card.Card(values[x], faces[x], suit))
+        for suit in range(4):
+            for x in range(13):
+                path = "S" + str(suit+1) + "-C" + str(x+1) + ".png"
+                tempCard = pygame.image.load(os.path.join(folderPath, path))
+                tempCard = pygame.transform.scale(tempCard, (width, height))
+                self.cards.append(Card(values[x], faces[x], suits[suit], tempCard))
 
     #Print Technical information of each card in the deck
     def reprPrint(self):
