@@ -19,7 +19,7 @@ class Blackjack:
         
         #User input
         self.button = Button(14)    #Hit/Play again
-        self.button2 = Button(18)   #Stand/Quit
+        self.button2 = Button(15)   #Stand/Quit
 
         #Play the game with a 3-deck shoe (Append 2 decks to playing deck)
         self.playingDeck.build()
