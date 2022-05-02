@@ -4,6 +4,7 @@ import time as t
 from gpiozero import Button, LED
 import random
 import pygame
+from sys import exit
 
 #Initialize pygame
 pygame.init()
@@ -252,6 +253,10 @@ class Blackjack:
             option = ""
             self.ledB.blink()
             while True:
+                for event in pygame.event.get():
+                    if event.type == pygame.QUIT:
+                        exit(1)
+
                 if self.button.is_pressed:
                     self.ledB.off()
                     print("Player Input: Hit")
@@ -387,6 +392,10 @@ class Blackjack:
             
             #Button input
             while True:
+                    for event in pygame.event.get():
+                        if event.type == pygame.QUIT:
+                            exit(1)
+
                     if self.button.is_pressed:
                         print("Player Input: Play Again")
                         print()
