@@ -222,6 +222,8 @@ class Blackjack:
             gameDisplay.blit(winText, winTextPos)
 
         #Ask to play again
+        pygame.display.update()
+        t.sleep(5)
         continueText = myFont.render("Play Again?", 1, (255,255,255))
         continueTextPos = continueText.get_rect(center = (DISPLAY_WIDTH/2, (DISPLAY_HEIGHT/2) + 75/2))
         pygame.draw.rect(gameDisplay, (0,0,0), continueTextPos)
@@ -263,7 +265,7 @@ class Blackjack:
             print("21! Dealer Wins!")
             print()
             self.winState(self.dealer, bj = True)
-            t.sleep(5)
+            t.sleep(1)
             return
 
 
@@ -282,7 +284,7 @@ class Blackjack:
                 print("Winner!")
                 print()
                 self.winState(self.player, bj = True)
-                t.sleep(5)
+                t.sleep(1)
                 return
 
             #Check if player got >21 (double aces)
@@ -337,7 +339,7 @@ class Blackjack:
                     print("21! " + self.player.name + " Wins!")
                     print()
                     self.winState(self.player, bj = True)
-                    t.sleep(5)
+                    t.sleep(1)
                     return
 
 
@@ -356,7 +358,7 @@ class Blackjack:
                         print(self.player.name + " bust!")
                         print()
                         self.winState(self.player, bust = True)
-                        t.sleep(5)
+                        t.sleep(1)
                         return
 
             #stand
@@ -393,7 +395,7 @@ class Blackjack:
                 print("21! " + self.dealer.name + " Wins!")
                 print()
                 self.winState(self.dealer, bj = True)
-                t.sleep(5)
+                t.sleep(1)
                 return
 
             #If dealer card value > 21
@@ -410,7 +412,7 @@ class Blackjack:
                     print("Dealer bust!")
                     print()
                     self.winState(self.dealer, bust = True)
-                    t.sleep(5)
+                    t.sleep(1)
                     return
 
             self.showHand()
@@ -425,7 +427,7 @@ class Blackjack:
             print(self.player.name + " Wins!")
             print()
             self.winState(self.player)
-            t.sleep(5)
+            t.sleep(1)
 
         #Dealer wins
         elif self.dealer.cardValue() > self.player.cardValue():
@@ -433,7 +435,7 @@ class Blackjack:
             print(self.player.name + " Loses.")
             print()
             self.winState(self.dealer)
-            t.sleep(5)
+            t.sleep(1)
 
 
         else:
@@ -441,7 +443,7 @@ class Blackjack:
             print(self.player.name + " Breaks Even.")
             print()
             self.winState()
-            t.sleep(5)
+            t.sleep(1)
 
 
 
