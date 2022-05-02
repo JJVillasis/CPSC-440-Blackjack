@@ -1,10 +1,11 @@
 class Card:
 
     #Constructor of Card object
-    def __init__(self, value, face, suit):
+    def __init__(self, value, face, suit, image):
         self.suit = suit
         self.face = face
         self.value = value
+        self.image = image
 
     #Instance of object when using repr()
     def __repr__(self):

@@ -3,6 +3,7 @@ from Player import Player
 import time as t
 from gpiozero import Button
 import random
+import pygame
 
 class Blackjack:
 
@@ -74,6 +75,8 @@ class Blackjack:
         print("H = Hit")
         print("S = Stand")
         print()
+
+    def drawHand(self):
 
     def gameplay(self):
         #Clear hands from previous game
