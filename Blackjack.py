@@ -4,6 +4,7 @@ import time as t
 from gpiozero import Button, LED
 import random
 import pygame
+import os
 from sys import exit
 
 #Initialize pygame
